@@ -1,0 +1,60 @@
+# Plan de Implementación: Consolidador de Documentos DIAN
+
+Este documento detalla la arquitectura y los pasos para construir una herramienta local que procese archivos XML de la DIAN (Facturas, Notas Crédito y Nómina) y los consolide en Excel.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Privacidad y Seguridad**: Al ser una aplicación 100% local, los datos nunca salen de la computadora del usuario. Esto es ideal para el cumplimiento de protección de datos contables.
+> 
+> **Formatos de Nómina**: La nómina electrónica tiene una estructura UBL diferente a la de facturación. ¿Desea que se agrupen en la misma pestaña de Excel o en pestañas separadas?
+
+## Proposed Changes
+
+### Arquitectura de la Aplicación
+Se propone utilizar **Electron** con **React** para garantizar el acceso al sistema de archivos local y ofrecer una interfaz moderna.
+
+---
+
+### Componente: Lógica de Procesamiento (XML & Data)
+
+#### [NEW] `data-transformer.js`
+Lógica central para manejar la flexibilidad requerida:
+- **Modo Resumen**: Agrupa datos por cabecera de documento (Totales).
+- **Modo Detalle**: Aplana el XML para generar una fila por cada ítem/producto, repitiendo la información de cabecera.
+- **Configurador de Agrupación**: Permite decidir si se exportan hojas separadas por tipo de documento o una tabla consolidada única.
+
+#### [NEW] `file-system-service.js`
+Servicio para manejar la selección de carpetas y el escaneo de archivos XML.
+- Implementación de `dialog.showOpenDialog` para selección de carpetas.
+- Recursividad opcional para buscar en subcarpetas.
+
+#### [NEW] `xml-processor.js`
+Lógica de parsing basada en XPath/UBL 2.1.
+- Extracción de: CUFE/CUDE, Fecha, Emisor, Receptor, Valores Base, Impuestos (IVA, INC, Retenciones) y Totales.
+- Manejo de diferentes tipos de documentos (Invoice, CreditNote, Nominal).
+
+---
+
+### Componente: Frontend (React / UI)
+
+#### [NEW] `Dashboard.jsx`
+Panel principal donde el usuario selecciona la carpeta y visualiza el progreso.
+
+#### [NEW] `ColumnConfigurator.jsx`
+Interfaz para que el usuario:
+- Seleccione el nivel de detalle (Cabeceras vs. Ítems).
+- Active/Desactive la agrupación por tipo de documento.
+- Arrastre y seleccione campos para el formato genérico.
+
+#### [NEW] `ExcelExportService.js`
+Uso de la librería `xlsx` para generar el archivo final basado en la configuración del usuario.
+- Soporte para múltiples hojas si la agrupación está activa.
+
+## Verification Plan
+
+### Manual Verification
+1. **Prueba de Carga**: Cargar una carpeta con +500 XMLs para verificar rendimiento.
+2. **Validación de Datos**: Comparar los totales extraídos contra la visualización oficial de la DIAN para 5 archivos aleatorios.
+3. **Prueba de Configuración**: Cambiar el orden de las columnas en la UI y verificar que el Excel refleje el cambio exacto.
+4. **Exportación**: Verificar que el archivo `.xlsx` se abra correctamente en Excel y Google Sheets.

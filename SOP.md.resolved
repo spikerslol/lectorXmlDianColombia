@@ -1,0 +1,35 @@
+# SOP: Procesamiento y Consolidación de Documentos Electrónicos DIAN
+
+Este procedimiento estándar describe los pasos operativos para utilizar la herramienta de consolidación de XMLs.
+
+## 1. Preparación de Archivos
+- Asegúrese de que todos los archivos XML (Facturas, Notas Crédito, Nómina) estén en una carpeta local o en subcarpetas dentro de ella.
+- Los archivos deben ser los originales descargados de la DIAN o del proveedor tecnológico (UBL 2.1).
+
+## 2. Ejecución de la Herramienta
+- Inicie la aplicación local.
+- Utilice el botón **"Seleccionar Carpeta"** para navegar y elegir el directorio donde se encuentran los archivos.
+
+## 3. Procesamiento y Extracción
+- Una vez seleccionada la carpeta, la aplicación escaneará automáticamente todos los archivos `.xml`.
+- El sistema leerá los nodos específicos de cada tipo de documento:
+    - **Factura/Nota Crédito**: Emisor, Receptor, CUFE, Fecha, Base Imponible, IVA, Retenciones, Total.
+    - **Nómina**: Empleado, Empleador, CUNE, Devengados, Deducciones, Neto Pagado.
+
+## 4. Configuración de Exportación
+- En el panel de control, elija el **Nivel de Detalle**:
+    - **Por Documento**: Una fila por factura (Totales).
+    - **Por Ítem**: Una fila por cada producto dentro de las facturas.
+- Configure la **Agrupación**:
+    - **Consolidado**: Todo en una sola tabla.
+    - **Separado**: Pestañas diferentes para Facturas, Notas Crédito y Nómina.
+- Seleccione y ordene las columnas según su necesidad.
+
+## 5. Generación del Excel
+- Haga clic en **"Exportar a Excel"**.
+- Seleccione la ubicación de guardado.
+- El archivo resultante estará listo para ser importado al sistema contable (Siigo, Helisa, etc.) o para auditoría.
+
+## 6. Resolución de Problemas
+- **XML no leído**: Verifique que el archivo no esté corrupto y sea formato XML.
+- **Campos vacíos**: Algunos documentos pueden no tener ciertos impuestos (ej: Reten-ICA); estos aparecerán como 0 o vacío en el Excel.
